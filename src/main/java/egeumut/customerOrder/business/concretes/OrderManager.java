@@ -106,4 +106,14 @@ public class OrderManager implements OrderService {
         orderRepository.save(order);
         return new SuccessResult("Order Cancelled");
     }
+
+    @Override
+    public DataResult<List<GetOrderResponse>> getOrdersByUser(int request) {
+        orderBusinessRules.checkIfUserExists(request);
+        var userOrders = orderRepository.findAllByUserId(request);
+        List<GetOrderResponse> orderResponses = userOrders.stream()
+                .map(user -> this.modelMapperService.forResponse().
+                        map(user,GetOrderResponse.class)).toList();
+        return new SuccessDataResult<List<GetOrderResponse>>(orderResponses , "Orders Listed for user");
+    }
 }

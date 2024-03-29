@@ -13,6 +13,7 @@ import lombok.*;
 @EqualsAndHashCode(callSuper = true)
 @Getter
 @Setter
+@Builder
 public class OrderState extends BaseEntity<Integer> {
     private String name;
 }

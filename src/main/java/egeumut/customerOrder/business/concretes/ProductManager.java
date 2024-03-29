@@ -1,5 +1,6 @@
 package egeumut.customerOrder.business.concretes;
 
+import egeumut.customerOrder.Core.aspects.logging.Loggable;
 import egeumut.customerOrder.Core.utilities.mappers.ModelMapperService;
 import egeumut.customerOrder.Core.utilities.results.DataResult;
 import egeumut.customerOrder.Core.utilities.results.Result;
@@ -29,6 +30,8 @@ public class ProductManager implements ProductService {
 
     @Override
     public Result add(CreateProductRequest request) {
+        productBusinessRules.existsByCategoryId(request.getCategoryId());
+
         Product newProduct = this.modelMapperService.forRequest().map(request , Product.class);
         newProduct.setCreatedDate(LocalDateTime.now());    //date time now
         productRepository.save(newProduct);
@@ -62,6 +65,7 @@ public class ProductManager implements ProductService {
         productRepository.deleteById(request);
         return new SuccessResult("Deleted Successfully");
     }
+    @Loggable
     @Override
     public Result lowerProductCount(int productId, int productCount) {
         productBusinessRules.existById(productId);
@@ -72,6 +76,7 @@ public class ProductManager implements ProductService {
         productRepository.save(product);
         return new SuccessResult("Count Lowered Successfully");
     }
+    @Loggable
     @Override
     public Result increaseProductCount(int productId, int productCount) {
         productBusinessRules.existById(productId);

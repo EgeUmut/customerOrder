@@ -1,6 +1,7 @@
 package egeumut.customerOrder.business.rules;
 
 import egeumut.customerOrder.Core.exceptions.types.BusinessException;
+import egeumut.customerOrder.dataAccess.abstracts.CategoryRepository;
 import egeumut.customerOrder.dataAccess.abstracts.ProductRepository;
 import egeumut.customerOrder.entities.concretes.Product;
 import lombok.AllArgsConstructor;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class ProductBusinessRules {
     private ProductRepository productRepository;
+    private CategoryRepository categoryRepository;
 
     public void existById(int id) {
         if (!productRepository.existsById(id)) {
@@ -21,6 +23,12 @@ public class ProductBusinessRules {
         Product product = productRepository.findById(productId).orElseThrow();
         if (product.getStockCount() < productCountToLower){
             throw new BusinessException("Product(s) in stock is not enough for this order");
+        }
+    }
+
+    public void existsByCategoryId(int id) {
+        if (!categoryRepository.existsById(id)) {
+            throw new BusinessException("There is no such category");
         }
     }
 }

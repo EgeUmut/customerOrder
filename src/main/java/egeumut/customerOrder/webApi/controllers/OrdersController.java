@@ -62,4 +62,10 @@ public class OrdersController {
     public Result cancelOrder(int request){
         return orderService.cancelOrder(request);
     }
+
+    @Loggable
+    @GetMapping("/getOrdersByUserId")
+    public DataResult<List<GetOrderResponse>> getOrdersByUserId(int request){
+        return orderService.getOrdersByUser(request);
+    }
 }

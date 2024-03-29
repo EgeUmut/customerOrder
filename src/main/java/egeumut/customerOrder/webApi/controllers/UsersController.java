@@ -27,12 +27,12 @@ public class UsersController {
 //        this.userService = userService;
 //    }
 
-    @Loggable
-    @PostMapping()
-    @ResponseStatus(code = HttpStatus.CREATED)  //201
-    public Result Add(CreateUserRequest request){
-        return userService.add(request);
-    }
+//    @Loggable
+//    @PostMapping()
+//    @ResponseStatus(code = HttpStatus.CREATED)  //201
+//    public Result Add(CreateUserRequest request){
+//        return userService.add(request);
+//    }
 
     @GetMapping()
     public DataResult<List<GetAllUserResponse>> getAll(){

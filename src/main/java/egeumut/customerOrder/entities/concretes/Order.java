@@ -12,6 +12,7 @@ import lombok.*;
 @EqualsAndHashCode(callSuper = true)
 @Getter
 @Setter
+@Builder
 public class Order extends BaseEntity<Integer> {
 
     @ManyToOne
@@ -28,12 +29,7 @@ public class Order extends BaseEntity<Integer> {
     @Column(name="orderSumPrice")
     private double orderSumPrice;
 
-    //@Column(name="state")
-    //private int state; //1-Received 2-Shipping 3-Cancelled
-
     @ManyToOne
     @JoinColumn(name = "orderStateId")
     private OrderState orderState;
-
-
 }

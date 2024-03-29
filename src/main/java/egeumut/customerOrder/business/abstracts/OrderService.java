@@ -17,4 +17,5 @@ public interface OrderService {
     public Result deleteById(int request);
     public DataResult<GetOrderResponse> update(UpdateOrderRequest request);
     public Result cancelOrder(int request);
+    public DataResult<List<GetOrderResponse>> getOrdersByUser(int request);
 }
