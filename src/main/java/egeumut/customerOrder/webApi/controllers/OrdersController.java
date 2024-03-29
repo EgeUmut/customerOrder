@@ -65,7 +65,7 @@ public class OrdersController {
 
     @Loggable
     @GetMapping("/getOrdersByUserId")
-    public DataResult<List<GetOrderResponse>> getOrdersByUserId(int request){
+    public DataResult<List<GetOrderResponse>> getOrdersByUserId( int request){
         return orderService.getOrdersByUser(request);
     }
 }

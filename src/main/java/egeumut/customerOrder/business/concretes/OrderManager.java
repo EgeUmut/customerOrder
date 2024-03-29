@@ -82,6 +82,7 @@ public class OrderManager implements OrderService {
     @Override
     public DataResult<GetOrderResponse> update(UpdateOrderRequest request) {
         orderBusinessRules.checkIfOrderExists(request.getId());
+        orderBusinessRules.CheckIfOrderCancelled(request.getId());
 
         Order order = this.orderRepository.findById(request.getId()).orElseThrow();
         LocalDateTime createdDate = order.getCreatedDate();  //get created date
@@ -97,6 +98,7 @@ public class OrderManager implements OrderService {
     @Override
     public Result cancelOrder(int request) {
         orderBusinessRules.checkIfOrderExists(request);
+        orderBusinessRules.CheckIfOrderCancelled(request);
 
         Order order = orderRepository.findById(request).orElseThrow();
         OrderState orderState = modelMapperService.forResponse().map(orderStateService.getById(4).getData(),OrderState.class);  //Get Default Order State for Cancelled
@@ -110,7 +112,8 @@ public class OrderManager implements OrderService {
     @Override
     public DataResult<List<GetOrderResponse>> getOrdersByUser(int request) {
         orderBusinessRules.checkIfUserExists(request);
-        var userOrders = orderRepository.findAllByUserId(request);
+
+        var userOrders = orderRepository.findByUserId(request);
         List<GetOrderResponse> orderResponses = userOrders.stream()
                 .map(user -> this.modelMapperService.forResponse().
                         map(user,GetOrderResponse.class)).toList();
