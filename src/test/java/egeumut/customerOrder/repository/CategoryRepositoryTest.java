@@ -22,7 +22,7 @@ public class CategoryRepositoryTest {
     private Category category = new Category();
     @BeforeEach
     public void setup(){
-        categoryRepository.deleteAll();
+        //categoryRepository.deleteAll();
 
         category.setName("Test Category");
     }

@@ -38,11 +38,11 @@ public class OrderRepositoryTest {
 
     @BeforeEach
     public void setup(){
-        orderRepository.deleteAll();
-        orderStateRepository.deleteAll();
-        categoryRepository.deleteAll();
-        productRepository.deleteAll();
-        userRepository.deleteAll();
+//        orderRepository.deleteAll();
+//        orderStateRepository.deleteAll();
+//        categoryRepository.deleteAll();
+//        productRepository.deleteAll();
+//        userRepository.deleteAll();
 
         orderState = OrderState.builder()
                 .name("Test Order State")

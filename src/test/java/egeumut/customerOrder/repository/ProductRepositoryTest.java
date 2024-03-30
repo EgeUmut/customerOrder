@@ -30,8 +30,8 @@ public class ProductRepositoryTest {
 
     @BeforeEach
     public void build(){
-        productRepository.deleteAll();
-        categoryRepository.deleteAll();
+//        productRepository.deleteAll();
+//        categoryRepository.deleteAll();
 
         category = Category.builder()
                 .name("Test Category")
