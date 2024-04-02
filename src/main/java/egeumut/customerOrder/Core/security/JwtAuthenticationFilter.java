@@ -1,5 +1,6 @@
 package egeumut.customerOrder.Core.security;
 
+import egeumut.customerOrder.Core.exceptions.types.AuthorizationException;
 import egeumut.customerOrder.Core.exceptions.types.BusinessException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -27,7 +28,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(@NonNull HttpServletRequest request,
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain)
-            throws ServletException, IOException {
+            throws AuthorizationException, ServletException, IOException {
         final String authHeader = request.getHeader("Authorization");
         //System.out.println("auth test1");
         final String jwt;

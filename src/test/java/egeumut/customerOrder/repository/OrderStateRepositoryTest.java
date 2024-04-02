@@ -41,7 +41,9 @@ public class OrderStateRepositoryTest {
     @DisplayName("Given order states in the database, When findAll method is called, Then list of all order states should be returned")
     public void givenOrderStatesInDatabase_WhenFindAll_ThenListOfAllOrderStates() {
         // Given
-
+        OrderState orderState = new OrderState();
+        orderState.setName("Test Order State");
+        orderStateRepository.save(orderState);
         // When
         List<OrderState> orderStates = orderStateRepository.findAll();
 

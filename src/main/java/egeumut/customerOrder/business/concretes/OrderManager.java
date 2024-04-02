@@ -43,8 +43,10 @@ public class OrderManager implements OrderService {
 
     @Override
     public Result addOrder(CreateOrderRequest createOrderRequest) {
-        Order newOrder = this.modelMapperService.forRequest().map(createOrderRequest , Order.class);   //mapping
+        orderBusinessRules.checkIfUserExists(createOrderRequest.getUserId());
+        orderBusinessRules.checkIfProductExists(createOrderRequest.getProductId());
 
+        Order newOrder = this.modelMapperService.forRequest().map(createOrderRequest , Order.class);   //mapping
         newOrder.setCreatedDate(LocalDateTime.now());    //set date time now
         newOrder.setOrderSumPrice(productService.getProductById(createOrderRequest.getProductId()).getData().getUnitPrice() * newOrder.getProductCount());  //Set Sum Price for order
         productService.lowerProductCount(newOrder.getProduct().getId() , newOrder.getProductCount());   // Lower Product Stock

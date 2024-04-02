@@ -37,7 +37,7 @@ public class OrdersController {
     @PostMapping()
     @ResponseStatus(code = HttpStatus.CREATED)
     @Operation(summary = "Create a new order")
-    public Result addOrder(@RequestBody CreateOrderRequest createOrderRequest){
+    public Result addOrder(@Valid @RequestBody CreateOrderRequest createOrderRequest){
         return orderService.addOrder(createOrderRequest);
     }
 

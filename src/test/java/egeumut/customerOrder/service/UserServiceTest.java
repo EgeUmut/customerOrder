@@ -131,16 +131,15 @@ public class UserServiceTest {
         responseList.add(new GetAllUserResponse(1,"john","Doe","johndoe","john.doe@example.com","123 Main St","123456789",null,null,null));
         responseList.add(new GetAllUserResponse(2,"john2","Doe2","johndoe2","john.doe@example.com2","123 Main St2","123456789",null,null,null));
 
-        // UserRepository mock'una uygun bir liste dönmesi söyleniyor
+        // When
         when(userRepository.findAll()).thenReturn(userList);
 
-        // ModelMapperService mock'una uygun bir dönüş sağlanıyor
         when(modelMapperService.forResponse()).thenReturn(modelMapper);
         when(modelMapper.map(any(User.class), eq(GetAllUserResponse.class)))
                 .thenReturn(responseList.get(0))
                 .thenReturn(responseList.get(1));
 
-        // When
+
         DataResult<List<GetAllUserResponse>> result = userManager.getAllUsers();
 
         // Then

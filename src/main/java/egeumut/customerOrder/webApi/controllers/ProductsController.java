@@ -29,7 +29,7 @@ public class ProductsController {
     @PostMapping()
     @ResponseStatus(code = HttpStatus.CREATED)
     @Loggable
-    public Result addProduct(CreateProductRequest createProductRequest){
+    public Result addProduct(@Valid @RequestBody CreateProductRequest createProductRequest){
         return productService.addProduct(createProductRequest);
     }
 

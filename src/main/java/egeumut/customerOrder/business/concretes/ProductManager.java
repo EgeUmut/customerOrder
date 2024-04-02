@@ -12,6 +12,7 @@ import egeumut.customerOrder.business.requests.product.UpdateProductRequest;
 import egeumut.customerOrder.business.responses.product.GetAllProductResponse;
 import egeumut.customerOrder.business.responses.product.GetProductResponse;
 import egeumut.customerOrder.business.rules.ProductBusinessRules;
+import egeumut.customerOrder.dataAccess.abstracts.CategoryRepository;
 import egeumut.customerOrder.dataAccess.abstracts.ProductRepository;
 import egeumut.customerOrder.entities.concretes.Product;
 import org.springframework.stereotype.Service;
@@ -25,20 +26,30 @@ public class ProductManager implements ProductService {
     private final ModelMapperService modelMapperService;
     private final ProductRepository productRepository;
     private final ProductBusinessRules productBusinessRules;
+    private final CategoryRepository categoryRepository;
 
-    public ProductManager(ModelMapperService modelMapperService, ProductRepository productRepository, ProductBusinessRules productBusinessRules) {
+    public ProductManager(ModelMapperService modelMapperService, ProductRepository productRepository,
+                          ProductBusinessRules productBusinessRules, CategoryRepository categoryRepository) {
         this.modelMapperService = modelMapperService;
         this.productRepository = productRepository;
         this.productBusinessRules = productBusinessRules;
+        this.categoryRepository = categoryRepository;
     }
 
     @Override
     public Result addProduct(CreateProductRequest createProductRequest) {
         productBusinessRules.existsByCategoryId(createProductRequest.getCategoryId());
-        Product newProduct = new Product();
-        newProduct = this.modelMapperService.forRequest().map(createProductRequest , Product.class);
-        newProduct.setCreatedDate(LocalDateTime.now());    //date time now
-        productRepository.save(newProduct);
+
+        //Product newProduct = modelMapperService.forRequest().map(createProductRequest , Product.class);
+        //newProduct.setCreatedDate(LocalDateTime.now());    //date time now
+        Product testProduct = new Product();
+        testProduct.setName(createProductRequest.getName());
+        testProduct.setStockCount(createProductRequest.getStockCount());
+        testProduct.setDistributorName(createProductRequest.getDistributorName());
+        testProduct.setUnitPrice(createProductRequest.getUnitPrice());
+        testProduct.setCategory(categoryRepository.findById(createProductRequest.getCategoryId()).orElseThrow());
+        testProduct.setCreatedDate(LocalDateTime.now());    //set created date
+        productRepository.saveAndFlush(testProduct);
 
         return new SuccessResult("Added Successfully");
     }
