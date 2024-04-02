@@ -1,6 +1,7 @@
 package egeumut.customerOrder.business.requests.user;
 
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,7 +11,8 @@ import lombok.NoArgsConstructor;
 @Data
 public class UpdateUserRequest {
 
-    @NotEmpty(message="User cannot be empty!")
+    //@NotEmpty(message="User cannot be empty!")
+    @Positive
     private int id;
     @NotEmpty(message="first name cannot be empty!")
     private String firstName;

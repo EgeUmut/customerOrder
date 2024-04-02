@@ -8,7 +8,8 @@ import egeumut.customerOrder.business.requests.orderState.CreateOrderStateReques
 import egeumut.customerOrder.business.requests.orderState.UpdateOrderStateRequest;
 import egeumut.customerOrder.business.responses.orderState.GetAllOrderStateResponse;
 import egeumut.customerOrder.business.responses.orderState.GetOrderStateResponse;
-import lombok.AllArgsConstructor;
+import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,36 +17,61 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/orderStates")
-@AllArgsConstructor
 public class OrderStatesController {
-    private OrderStateService orderStateService;
+    private final OrderStateService orderStateService;
 
+    public OrderStatesController(OrderStateService orderStateService) {
+        this.orderStateService = orderStateService;
+    }
+
+    /**
+     * Adds a new order state.
+     *
+     * @param createOrderStateRequest The request body containing the order state details.
+     * @return The result of the operation.
+     */
     @Loggable
     @PostMapping()
-    @ResponseStatus(code = HttpStatus.CREATED)  //201
-    public Result Add(CreateOrderStateRequest request){
-        return orderStateService.add(request);
+    @ResponseStatus(code = HttpStatus.CREATED)
+    @Operation(summary = "Adds a new order state")
+    public Result AddOrderState(@Valid  @RequestBody CreateOrderStateRequest createOrderStateRequest){
+        return orderStateService.addOrderState(createOrderStateRequest);
     }
 
+    /**
+     * Retrieves all order states.
+     *
+     * @return A list of all order states.
+     */
     @GetMapping()
-    public DataResult<List<GetAllOrderStateResponse>> getAll(){
-        return orderStateService.getAll();
+    @Operation(summary = "Retrieves all order states")
+    public DataResult<List<GetAllOrderStateResponse>> getAllOrderStates(){
+        return orderStateService.getAllOrderStates();
     }
 
+    /**
+     * Retrieves an order state by its ID.
+     *
+     * @param OrderStateId The ID of the order state.
+     * @return The order state details.
+     */
     @GetMapping("/{id}")
-    public DataResult<GetOrderStateResponse> getById(@PathVariable("id") int request){
-        return orderStateService.getById(request);
+    @Operation(summary = "Retrieves an order state by its ID")
+    public DataResult<GetOrderStateResponse> getOrderStateById(@Valid @PathVariable("id") int OrderStateId){
+        return orderStateService.getOrderStateById(OrderStateId);
     }
 
-    //@DeleteMapping()
-    //public Result deleteById(int request){
-    //    return orderStateService.deleteById(request);
-    //}
-
+    /**
+     * Updates an order state.
+     *
+     * @param updateOrderStateRequest The updated order state details.
+     * @return The updated order state details.
+     */
     @Loggable
     @PutMapping()
-    public DataResult<GetOrderStateResponse> update(UpdateOrderStateRequest request){
-        return orderStateService.update(request);
+    @Operation(summary = "Updates an order state")
+    public DataResult<GetOrderStateResponse> updateOrderState(@Valid @RequestBody UpdateOrderStateRequest updateOrderStateRequest){
+        return orderStateService.updateOrderState(updateOrderStateRequest);
     }
 
 }

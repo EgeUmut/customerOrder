@@ -10,9 +10,9 @@ import egeumut.customerOrder.business.responses.category.GetCategoryResponse;
 import java.util.List;
 
 public interface CategoryService {
-    public Result add(CreateCategoryRequest request);
-    public DataResult<List<GetAllCategoryResponse>> getAll();
-    public DataResult<GetCategoryResponse> getById(int request);
-    public Result deleteById(int request);
-    public DataResult<GetCategoryResponse> update(UpdateCategoryRequest request);
+    Result addCategory(CreateCategoryRequest request);
+    DataResult<List<GetAllCategoryResponse>> getAllCategories();
+    DataResult<GetCategoryResponse> getCategoryById(int categoryId);
+    Result deleteCategoryById(int request);
+    DataResult<GetCategoryResponse> updateCategory(UpdateCategoryRequest updateCategoryRequest);
 }

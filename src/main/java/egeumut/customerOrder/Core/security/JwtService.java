@@ -1,4 +1,4 @@
-package egeumut.customerOrder.Core.config;
+package egeumut.customerOrder.Core.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

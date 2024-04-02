@@ -10,13 +10,13 @@ import egeumut.customerOrder.business.responses.product.GetProductResponse;
 import java.util.List;
 
 public interface ProductService {
-    public Result add(CreateProductRequest request);
-    public DataResult<List<GetAllProductResponse>> getAll();
-    public DataResult<GetProductResponse> getById(int request);
-    public Result deleteById(int request);
-    public Result lowerProductCount(int productId , int productCount);
-    public Result increaseProductCount(int productId , int productCount);
-    public DataResult<GetProductResponse> update(UpdateProductRequest request);
-    public DataResult<List<GetProductResponse>> getProductByCategoryName(String request);
-    public DataResult<List<GetProductResponse>> getProductByUnitPriceBetween(double minPrice, double maxPrice);
+    Result addProduct(CreateProductRequest createProductRequest);
+    DataResult<List<GetAllProductResponse>> getAllProducts();
+    DataResult<GetProductResponse> getProductById(int ProductId);
+    Result deleteProductById(int productId);
+    void lowerProductCount(int productId, int productCount);
+    void increaseProductCount(int productId, int productCount);
+    DataResult<GetProductResponse> updateProduct(UpdateProductRequest updateProductRequest);
+    DataResult<List<GetProductResponse>> getProductByCategoryName(String categoryName);
+    DataResult<List<GetProductResponse>> getProductByUnitPriceBetween(double minPrice, double maxPrice);
 }

@@ -12,39 +12,43 @@ import egeumut.customerOrder.business.requests.order.CreateOrderRequest;
 import egeumut.customerOrder.business.requests.order.UpdateOrderRequest;
 import egeumut.customerOrder.business.responses.order.GetAllOrderResponse;
 import egeumut.customerOrder.business.responses.order.GetOrderResponse;
-import egeumut.customerOrder.business.responses.product.GetAllProductResponse;
-import egeumut.customerOrder.business.responses.product.GetProductResponse;
 import egeumut.customerOrder.business.rules.OrderBusinessRules;
 import egeumut.customerOrder.dataAccess.abstracts.OrderRepository;
 import egeumut.customerOrder.entities.concretes.Order;
 import egeumut.customerOrder.entities.concretes.OrderState;
-import egeumut.customerOrder.entities.concretes.Product;
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@AllArgsConstructor
+
 @Service
 public class OrderManager implements OrderService {
-    private OrderRepository orderRepository;
-    private ModelMapperService modelMapperService;
-    private ProductService productService;
-    private OrderBusinessRules orderBusinessRules;
-    private OrderStateService orderStateService;
+    private final OrderRepository orderRepository;
+    private final ModelMapperService modelMapperService;
+    private final ProductService productService;
+    private final OrderBusinessRules orderBusinessRules;
+    private final OrderStateService orderStateService;
+
+    public OrderManager(OrderRepository orderRepository, ModelMapperService modelMapperService,
+                        ProductService productService, OrderBusinessRules orderBusinessRules,
+                        OrderStateService orderStateService) {
+        this.orderRepository = orderRepository;
+        this.modelMapperService = modelMapperService;
+        this.productService = productService;
+        this.orderBusinessRules = orderBusinessRules;
+        this.orderStateService = orderStateService;
+    }
 
     @Override
-    public Result add(CreateOrderRequest request) {
-        Order newOrder = this.modelMapperService.forRequest().map(request , Order.class);   //mapping
+    public Result addOrder(CreateOrderRequest createOrderRequest) {
+        Order newOrder = this.modelMapperService.forRequest().map(createOrderRequest , Order.class);   //mapping
 
         newOrder.setCreatedDate(LocalDateTime.now());    //set date time now
-
-        newOrder.setOrderSumPrice(productService.getById(request.getProductId()).getData().getUnitPrice() * newOrder.getProductCount());  //Set Sum Price for order
+        newOrder.setOrderSumPrice(productService.getProductById(createOrderRequest.getProductId()).getData().getUnitPrice() * newOrder.getProductCount());  //Set Sum Price for order
         productService.lowerProductCount(newOrder.getProduct().getId() , newOrder.getProductCount());   // Lower Product Stock
-
-        OrderState orderState = modelMapperService.forResponse().map(orderStateService.getById(1).getData(),OrderState.class);  //Get Default Order State for Received
+        OrderState orderState = modelMapperService.forResponse().map(orderStateService.getOrderStateById(1).getData(),OrderState.class);  //Get Default Order State for Received
         newOrder.setOrderState(orderState);
 
         orderRepository.save(newOrder);
@@ -52,7 +56,7 @@ public class OrderManager implements OrderService {
     }
 
     @Override
-    public DataResult<List<GetAllOrderResponse>> getAll() {
+    public DataResult<List<GetAllOrderResponse>> getAllOrders() {
         List<Order> orders =  orderRepository.findAll();
         List<GetAllOrderResponse> orderResponses = orders.stream()
                 .map(user -> this.modelMapperService.forResponse().
@@ -62,31 +66,31 @@ public class OrderManager implements OrderService {
     }
 
     @Override
-    public DataResult<GetOrderResponse> getById(int request) {
-        orderBusinessRules.checkIfOrderExists(request);
+    public DataResult<GetOrderResponse> getOrderById(int orderId) {
+        orderBusinessRules.checkIfOrderExists(orderId);
 
-        Order order = this.orderRepository.findById(request).orElseThrow();
+        Order order = this.orderRepository.findById(orderId).orElseThrow();
         GetOrderResponse response = modelMapperService.forResponse().map(order,GetOrderResponse.class);
 
         return new SuccessDataResult<GetOrderResponse>(response,"Order Found Successfully");
     }
 
     @Override
-    public Result deleteById(int request) {
-        orderBusinessRules.checkIfOrderExists(request);
+    public Result deleteOrderById(int orderId) {
+        orderBusinessRules.checkIfOrderExists(orderId);
 
-        orderRepository.deleteById(request);
+        orderRepository.deleteById(orderId);
         return new SuccessResult("Deleted Successfully");
     }
 
     @Override
-    public DataResult<GetOrderResponse> update(UpdateOrderRequest request) {
-        orderBusinessRules.checkIfOrderExists(request.getId());
-        orderBusinessRules.CheckIfOrderCancelled(request.getId());
+    public DataResult<GetOrderResponse> updateOrder(UpdateOrderRequest updateOrderRequest) {
+        orderBusinessRules.checkIfOrderExists(updateOrderRequest.getId());
+        orderBusinessRules.CheckIfOrderCancelled(updateOrderRequest.getId());
 
-        Order order = this.orderRepository.findById(request.getId()).orElseThrow();
+        Order order = this.orderRepository.findById(updateOrderRequest.getId()).orElseThrow();
         LocalDateTime createdDate = order.getCreatedDate();  //get created date
-        order = modelMapperService.forRequest().map(request,Order.class);
+        order = modelMapperService.forRequest().map(updateOrderRequest,Order.class);
         order.setCreatedDate(createdDate);   //set created date tmp fix
         order.setUpdatedDate(LocalDateTime.now());
         orderRepository.save(order);
@@ -96,12 +100,12 @@ public class OrderManager implements OrderService {
     }
 
     @Override
-    public Result cancelOrder(int request) {
-        orderBusinessRules.checkIfOrderExists(request);
-        orderBusinessRules.CheckIfOrderCancelled(request);
+    public Result cancelOrderById(int orderId) {
+        orderBusinessRules.checkIfOrderExists(orderId);
+        orderBusinessRules.CheckIfOrderCancelled(orderId);
 
-        Order order = orderRepository.findById(request).orElseThrow();
-        OrderState orderState = modelMapperService.forResponse().map(orderStateService.getById(4).getData(),OrderState.class);  //Get Default Order State for Cancelled
+        Order order = orderRepository.findById(orderId).orElseThrow();
+        OrderState orderState = modelMapperService.forResponse().map(orderStateService.getOrderStateById(4).getData(),OrderState.class);  //Get Default Order State for Cancelled
         order.setOrderState(orderState); //Default Cancel Id=4
         System.out.println(orderState.getId());
         productService.increaseProductCount(order.getProduct().getId() , order.getProductCount());  //Reset ProductStock Count
@@ -110,10 +114,10 @@ public class OrderManager implements OrderService {
     }
 
     @Override
-    public DataResult<List<GetOrderResponse>> getOrdersByUser(int request) {
-        orderBusinessRules.checkIfUserExists(request);
+    public DataResult<List<GetOrderResponse>> getOrdersByUserId(int userId) {
+        orderBusinessRules.checkIfUserExists(userId);
 
-        var userOrders = orderRepository.findByUserId(request);
+        var userOrders = orderRepository.findByUserId(userId);
         List<GetOrderResponse> orderResponses = userOrders.stream()
                 .map(user -> this.modelMapperService.forResponse().
                         map(user,GetOrderResponse.class)).toList();

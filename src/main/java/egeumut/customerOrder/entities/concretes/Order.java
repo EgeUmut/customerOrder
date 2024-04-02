@@ -10,8 +10,6 @@ import lombok.*;
 @Entity
 @Table(name="orders")
 @EqualsAndHashCode(callSuper = true)
-@Getter
-@Setter
 @Builder
 public class Order extends BaseEntity<Integer> {
 

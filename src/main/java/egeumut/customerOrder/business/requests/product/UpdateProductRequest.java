@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class UpdateProductRequest {
 
     @Positive
-    @NotEmpty(message="Product to update cannot be empty!")
+    //@NotEmpty(message="Product to update cannot be empty!")
     private int id;
     @NotEmpty(message="Product name cannot be empty!")
     private String name;

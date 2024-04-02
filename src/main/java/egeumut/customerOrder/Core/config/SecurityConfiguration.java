@@ -1,5 +1,6 @@
 package egeumut.customerOrder.Core.config;
 
+import egeumut.customerOrder.Core.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +11,10 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import static egeumut.customerOrder.entities.concretes.Role.ADMIN;
+import static egeumut.customerOrder.entities.concretes.Role.USER;
+import static org.springframework.http.HttpMethod.*;
 
 @Configuration
 @EnableWebSecurity
@@ -41,6 +46,11 @@ public class SecurityConfiguration {
                         req.requestMatchers(WHITE_LIST_URL)
                 //.requestMatchers("/api/**")
                 .permitAll()
+                                .requestMatchers("/api/v1/management/**").hasAnyRole(ADMIN.name(), USER.name())
+                                .requestMatchers(GET, "/api/v1/management/**").hasAnyAuthority(ADMIN.name(), USER.name())
+                                .requestMatchers(POST, "/api/v1/management/**").hasAnyAuthority(ADMIN.name(), USER.name())
+                                .requestMatchers(PUT, "/api/v1/management/**").hasAnyAuthority(ADMIN.name(), USER.name())
+                                .requestMatchers(DELETE, "/api/v1/management/**").hasAnyAuthority(ADMIN.name(), USER.name())
                 .anyRequest()
                 .authenticated()
                 )

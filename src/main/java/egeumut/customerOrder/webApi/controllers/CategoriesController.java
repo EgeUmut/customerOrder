@@ -6,13 +6,11 @@ import egeumut.customerOrder.Core.utilities.results.Result;
 import egeumut.customerOrder.business.abstracts.CategoryService;
 import egeumut.customerOrder.business.requests.category.CreateCategoryRequest;
 import egeumut.customerOrder.business.requests.category.UpdateCategoryRequest;
-import egeumut.customerOrder.business.requests.order.CreateOrderRequest;
-import egeumut.customerOrder.business.requests.order.UpdateOrderRequest;
 import egeumut.customerOrder.business.responses.category.GetAllCategoryResponse;
 import egeumut.customerOrder.business.responses.category.GetCategoryResponse;
-import egeumut.customerOrder.business.responses.order.GetAllOrderResponse;
-import egeumut.customerOrder.business.responses.order.GetOrderResponse;
-import lombok.AllArgsConstructor;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,36 +18,73 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/categories")
-@AllArgsConstructor
 public class CategoriesController {
-    private CategoryService categoryService;
+    private final CategoryService categoryService;
 
+    /**
+     * Constructor for CategoriesController.
+     * @param categoryService The CategoryService instance.
+     */
+    public CategoriesController(CategoryService categoryService) {
+        this.categoryService = categoryService;
+    }
+
+    /**
+     * Adds a new category.
+     * @param createCategoryRequest The request body containing the details of the category to be added.
+     * @return The result of the operation.
+     */
     @Loggable
     @PostMapping()
-    @ResponseStatus(code = HttpStatus.CREATED)  //201
-    public Result Add(CreateCategoryRequest request){
-        return categoryService.add(request);
+    @ResponseStatus(code = HttpStatus.CREATED)
+    @Operation(summary = "Adds a new category")
+    public Result addCategory(@Valid @RequestBody CreateCategoryRequest createCategoryRequest){
+        return categoryService.addCategory(createCategoryRequest);
     }
 
+    /**
+     * Retrieves all categories.
+     * @return A list of all categories.
+     */
     @GetMapping()
-    public DataResult<List<GetAllCategoryResponse>> getAll(){
-        return categoryService.getAll();
+    @Operation(summary = "Retrieves all categories")
+    public DataResult<List<GetAllCategoryResponse>> getAllCategories(){
+        return categoryService.getAllCategories();
     }
 
-    @GetMapping("/{id}")
-    public DataResult<GetCategoryResponse> getById(@PathVariable("id") int request){
-        return categoryService.getById(request);
+    /**
+     * Retrieves a category by its ID.
+     * @param categoryId The ID of the category.
+     * @return The details of the category.
+     */
+    @GetMapping("/{categoryId}")
+    @Operation(summary = "Retrieves a category by its ID")
+    public DataResult<GetCategoryResponse> getCategoryById(@Valid @PathVariable("categoryId") int categoryId){
+        return categoryService.getCategoryById(categoryId);
     }
 
+    /**
+     * Deletes a category by its ID.
+     * @param categoryId The ID of the category to delete.
+     * @return The result of the operation.
+     */
+    @DeleteMapping("/{categoryId}")
     @Loggable
-    @DeleteMapping()
-    public Result deleteById(int request){
-        return categoryService.deleteById(request);
+    @Operation(summary = "Deletes a category by its ID")
+    public Result deleteCategoryById(@Valid @PathVariable("categoryId") int categoryId){
+        return categoryService.deleteCategoryById(categoryId);
     }
 
-    @Loggable
+    /**
+     * Updates a category.
+     * @param updateCategoryRequest The updated details of the category.
+     * @return The updated details of the category.
+     */
     @PutMapping()
-    public DataResult<GetCategoryResponse> update(UpdateCategoryRequest request){
-        return categoryService.update(request);
+    @Loggable
+    @Operation(summary = "Updates a category")
+    public DataResult<GetCategoryResponse> updateCategory(@Valid @RequestBody @Parameter(description = "The updated details of the category")
+                                                              UpdateCategoryRequest updateCategoryRequest){
+        return categoryService.updateCategory(updateCategoryRequest);
     }
 }

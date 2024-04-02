@@ -2,6 +2,7 @@ package egeumut.customerOrder.entities.concretes;
 
 import egeumut.customerOrder.Core.entities.BaseEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -14,14 +15,12 @@ import java.util.Set;
 @Entity
 @Table(name="categories")
 @EqualsAndHashCode(callSuper = true)
-@Getter
-@Setter
 @Builder
 public class Category extends BaseEntity<Integer> {
     @Column(name="name")
     private String name;
-
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true , mappedBy = "category")
+    //cascade = CascadeType.ALL, orphanRemoval = true ,
+    @OneToMany(mappedBy = "category")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<Product> products;
 }

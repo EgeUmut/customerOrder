@@ -23,9 +23,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class OrderStateManager implements OrderStateService {
-    private OrderStateRepository orderStateRepository;
-    private ModelMapperService modelMapperService;
-    private OrderStateBusinessRules orderStateBusinessRules;
+    private final OrderStateRepository orderStateRepository;
+    private final ModelMapperService modelMapperService;
+    private final OrderStateBusinessRules orderStateBusinessRules;
 
     public OrderStateManager(OrderStateRepository orderStateRepository, ModelMapperService modelMapperService, OrderStateBusinessRules orderStateBusinessRules) {
         this.orderStateRepository = orderStateRepository;
@@ -49,56 +49,58 @@ public class OrderStateManager implements OrderStateService {
     }
 
     @Override
-    public Result add(CreateOrderStateRequest request) {
-        orderStateBusinessRules.checkIfOrderStateNameExists(request.getName());
+    public Result addOrderState(CreateOrderStateRequest createOrderStateRequest) {
+        orderStateBusinessRules.checkIfOrderStateNameExists(createOrderStateRequest.getName());
 
-        OrderState newOrderState = this.modelMapperService.forRequest().map(request , OrderState.class);
+        OrderState newOrderState = this.modelMapperService.forRequest().map(createOrderStateRequest , OrderState.class);
         newOrderState.setCreatedDate(LocalDateTime.now());    //date time now
         orderStateRepository.save(newOrderState);
+
         return new SuccessResult("Added Successfully");
     }
 
     @Override
-    public DataResult<List<GetAllOrderStateResponse>> getAll() {
+    public DataResult<List<GetAllOrderStateResponse>> getAllOrderStates() {
         List<OrderState> orderStates =  orderStateRepository.findAll();
+
         List<GetAllOrderStateResponse> orderStateResponses = orderStates.stream()
                 .map(user -> this.modelMapperService.forResponse().
                         map(user,GetAllOrderStateResponse.class)).collect(Collectors.toList());
-
         return new SuccessDataResult<List<GetAllOrderStateResponse>>(orderStateResponses,"Listed Successfully");
-
     }
 
     @Override
-    public DataResult<GetOrderStateResponse> getById(int request) {
-        orderStateBusinessRules.checkIfOrderStateExists(request);
+    public DataResult<GetOrderStateResponse> getOrderStateById(int orderStateId) {
+        orderStateBusinessRules.checkIfOrderStateExists(orderStateId);
 
-        OrderState orderState = this.orderStateRepository.findById(request).orElseThrow();
+        OrderState orderState = this.orderStateRepository.findById(orderStateId).orElseThrow();
+
         GetOrderStateResponse response = modelMapperService.forResponse().map(orderState,GetOrderStateResponse.class);
-        return new SuccessDataResult<GetOrderStateResponse>(response,"Order Found Successfully");
+        return new SuccessDataResult<GetOrderStateResponse>(response,"Order State Found Successfully");
     }
 
     @Override
-    public Result deleteById(int request) {
-        orderStateBusinessRules.checkIfOrderStateExists(request);
+    public Result deleteOrderStateById(int orderStateId) {
+        orderStateBusinessRules.checkIfOrderStateExists(orderStateId);
 
-        orderStateRepository.deleteById(request);
+        orderStateRepository.deleteById(orderStateId);
+
         return new SuccessResult("Deleted Successfully");
     }
 
     @Override
-    public DataResult<GetOrderStateResponse> update(UpdateOrderStateRequest request) {
-        orderStateBusinessRules.checkIfOrderStateExists(request.getId());   //check id
-        orderStateBusinessRules.checkNotToUpdateStartingData(request.getId());  //for initial data
+    public DataResult<GetOrderStateResponse> updateOrderState(UpdateOrderStateRequest updateOrderStateRequest) {
+        orderStateBusinessRules.checkIfOrderStateExists(updateOrderStateRequest.getId());   //check id
+        orderStateBusinessRules.checkNotToUpdateStartingData(updateOrderStateRequest.getId());  //for initial data
 
-        OrderState orderState = this.orderStateRepository.findById(request.getId()).orElseThrow();
+        OrderState orderState = this.orderStateRepository.findById(updateOrderStateRequest.getId()).orElseThrow();
         LocalDateTime createdDate = orderState.getCreatedDate();  //get created date
-        orderState = modelMapperService.forRequest().map(request,OrderState.class);
+        orderState = modelMapperService.forRequest().map(updateOrderStateRequest,OrderState.class);
         orderState.setCreatedDate(createdDate);   //set created date tmp fix
         orderState.setUpdatedDate(LocalDateTime.now());
         orderStateRepository.save(orderState);
 
         GetOrderStateResponse response = modelMapperService.forResponse().map(orderState,GetOrderStateResponse.class);
-        return new SuccessDataResult<GetOrderStateResponse>(response,"updated Successfully");
+        return new SuccessDataResult<GetOrderStateResponse>(response,"Updated Successfully");
     }
 }

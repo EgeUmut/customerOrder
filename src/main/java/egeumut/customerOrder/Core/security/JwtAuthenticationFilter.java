@@ -1,5 +1,6 @@
-package egeumut.customerOrder.Core.config;
+package egeumut.customerOrder.Core.security;
 
+import egeumut.customerOrder.Core.exceptions.types.BusinessException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,14 +27,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(@NonNull HttpServletRequest request,
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain)
-                                    throws ServletException, IOException {
+            throws ServletException, IOException {
         final String authHeader = request.getHeader("Authorization");
+        //System.out.println("auth test1");
         final String jwt;
         final String userEmail;
-        if(authHeader == null || !authHeader.startsWith("Bearer ")){
+        if(authHeader == null || !authHeader.startsWith("Bearer ")){    //Checks User Token
             filterChain.doFilter(request,response);
+            //System.out.println("auth test2");
+            //throw new BusinessException("test");
             return;
         }
+        //System.out.println("auth test3");
+        //User Token is valid go on
         jwt = authHeader.substring(7);
         userEmail =  jwtService.extractUsername(jwt);  // extract the userEmail from JWT token
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null){
@@ -48,7 +54,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         new WebAuthenticationDetailsSource().buildDetails(request)
                 );
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+            } else {
+                // Yetkilendirme başarısız olduğunda istisna fırlat
+                throw new BusinessException("Geçersiz JWT token");
             }
+        } else {
+            // Kullanıcı bulunamadığında veya kimlik doğrulama başarısız olduğunda istisna fırlat
+            throw new BusinessException("Kullanıcı bulunamadı veya kimlik doğrulama başarısız");
         }
         filterChain.doFilter(request,response);
     }

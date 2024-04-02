@@ -31,7 +31,6 @@ public class logAspect {
 
     @Around("@annotation(Loggable)")
     public Object applicationLogger(ProceedingJoinPoint pjp) throws Throwable {
-        //ObjectMapper mapper = new ObjectMapper();
         String methodName = pjp.getSignature().getName();   //get method name
         String className = pjp.getTarget().getClass().toString();   //get class name
         Object[] array = pjp.getArgs(); //get inputs
@@ -52,8 +51,6 @@ public class logAspect {
 
         log.info(mapper.writeValueAsString(logInfoAfter));
 
-//        log.info(className+" : "+ methodName + "()"+" Responses: " +
-//                mapper.writeValueAsString(object));
 
         return object;
     }

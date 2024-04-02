@@ -11,8 +11,6 @@ import lombok.*;
 @Entity
 @Table(name="orderStates")
 @EqualsAndHashCode(callSuper = true)
-@Getter
-@Setter
 @Builder
 public class OrderState extends BaseEntity<Integer> {
     private String name;

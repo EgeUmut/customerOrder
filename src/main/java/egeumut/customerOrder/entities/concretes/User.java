@@ -19,8 +19,6 @@ import java.util.Set;
 @Entity
 @Table(name="users")
 @EqualsAndHashCode(callSuper = true)
-@Getter
-@Setter
 @Builder
 public class User extends BaseEntity<Integer> implements UserDetails {
     @Column(name="firstName")
@@ -46,8 +44,8 @@ public class User extends BaseEntity<Integer> implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private Role role;
-
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true , mappedBy = "user")
+    //cascade = CascadeType.ALL, orphanRemoval = true ,
+    @OneToMany( mappedBy = "user")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<Order> orders;
 
