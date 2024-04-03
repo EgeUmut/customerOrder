@@ -34,7 +34,7 @@ public class AuthController {
      * @param registerRequest The request body containing the details of the user to be registered.
      * @return The authentication response.
      */
-    @Loggable
+    //@Loggable
     @PostMapping("/register")
     @Operation(summary = "Registers a new user")
     public ResponseEntity<AuthenticationResponse> register(@Valid @RequestBody @Parameter(description = "The request body containing the details of the user to be registered")

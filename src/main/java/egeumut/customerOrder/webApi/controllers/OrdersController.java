@@ -4,6 +4,7 @@ package egeumut.customerOrder.webApi.controllers;
 import egeumut.customerOrder.Core.aspects.logging.Loggable;
 import egeumut.customerOrder.Core.utilities.results.DataResult;
 import egeumut.customerOrder.Core.utilities.results.Result;
+import egeumut.customerOrder.Core.utilities.results.SuccessDataResult;
 import egeumut.customerOrder.business.abstracts.OrderService;
 import egeumut.customerOrder.business.requests.order.CreateOrderRequest;
 import egeumut.customerOrder.business.requests.order.UpdateOrderRequest;
@@ -86,9 +87,10 @@ public class OrdersController {
     @Loggable
     @PutMapping()
     @Operation(summary = "Update Order")
-    public DataResult<GetOrderResponse> updateOrder(@Valid UpdateOrderRequest updateOrderRequest){
+    public DataResult<GetOrderResponse> updateOrder(@Valid @RequestBody UpdateOrderRequest updateOrderRequest){
         if(updateOrderRequest.getOrderStateId() == 4){
             orderService.cancelOrderById(updateOrderRequest.getId());
+            return new SuccessDataResult<>("Order Updated");
         }
         return orderService.updateOrder(updateOrderRequest);
     }
@@ -112,7 +114,7 @@ public class OrdersController {
      * @param UserId The ID of the user.
      * @return A list of orders for the specified user.
      */
-    @Loggable
+    //@Loggable
     @GetMapping("/getOrdersByUserId")
     @Operation(summary = "Get Orders by user id")
     public DataResult<List<GetOrderResponse>> getOrdersByUserId(@Valid int UserId){
