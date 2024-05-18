@@ -55,7 +55,9 @@ public class GlobalExceptionHandler {
                         }).collect(Collectors.toList());
         ValidationProblemDetails validationProblemDetails = new ValidationProblemDetails();
         validationProblemDetails.setErrors(errorList);
+
         log.warn(mapper.writeValueAsString(validationProblemDetails));
+
         return validationProblemDetails;
     }
 
